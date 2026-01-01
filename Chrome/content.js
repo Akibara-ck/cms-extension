@@ -16,7 +16,7 @@ function isCMSPage() {
     const hasNavList = !!document.querySelector(".nav-list");
     // Fix Me : Add urlPattern
     // const urlPattern = /\/(description|submissions|communication|documentation|testing)(\/|$)/;
-    return hasCMSHeader && hasUserElement && haveNavList;
+    return hasCMSHeader && hasUserElement && hasNavList;
 }
 
 const parser = new DOMParser();
