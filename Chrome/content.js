@@ -244,10 +244,33 @@ async function refreshSingleTask(url, task) {
 }
 
 function createControls() {
-    /** */
-    testtest();
-    /** */
-    
+    const prev = document.createElement("button");
+    const next = document.createElement("button");
+    prev.setAttribute("hidden",true);
+    next.setAttribute("hidden",true);
+    if(!!window.location.href.match(`${baseURL}/tasks`)){
+        prev.textContent = "Prev";
+        next.textContent = "Next";
+        const prevUrl = moveProblem(-1);
+        const nextUrl = moveProblem(+1);
+        console.log(prevUrl);
+        console.log(nextUrl);
+        if(!!prevUrl){
+            prev.removeAttribute("hidden");
+        }
+        if(!!nextUrl){
+            next.removeAttribute("hidden");
+        }
+        prev.addEventListener("click", () => {
+            sessionStorage.setItem("cms-extension-scroll", window.scrollY);
+            window.location.href = prevUrl;
+        })
+        next.addEventListener("click", () => {
+            sessionStorage.setItem("cms-extension-scroll", window.scrollY);
+            window.location.href = nextUrl;
+        })
+    }
+
     const controlsContainer = document.createElement("div");
     controlsContainer.className = "cms-extension-controls";
     const totalScoreContainer = document.createElement("div");
@@ -267,6 +290,8 @@ function createControls() {
             }
         })
     );
+    controlsContainer.appendChild(prev);
+    controlsContainer.appendChild(next);
     controlsContainer.appendChild(totalScoreContainer);
     controlsContainer.appendChild(refreshButton);
     // last refreshed timestamp
@@ -356,36 +381,33 @@ function updateSidebar() {
     });
 }
 
-function testtest() {
-    const item = window.location.href.match(/A\d*-\d{3}/)[0]
-    let [level,number] = item.split("-");
-    level = parseInt(level[1]);
-    number = parseInt(number);
+function moveProblem(delta) {
+    const urlSplit = splitTaskURL();
+    const problem = urlSplit[1];
 
-    console.log(level);
-    console.log(number);
-    const Next = CheckItem(level,number,"Next")
-    const Prev = CheckItem(level,number,"Prev")
+    let query;
+    if(delta === +1){
+        query = handleMove(problem,1)
+    }else if(delta === -1){
+        query = handleMove(problem,-1)
+    }
 
-    console.log(`Next is ${Next}`);
-    console.log(`Prev is ${Prev}`);
+    if(!query)
+        return query;
+
+    return urlSplit[0]+query+urlSplit[2];
 }
 
-function CheckItem(level,number,query){
+function handleMove(item,delta){
     const headers = document.getElementsByClassName("nav-header");
 
-    const sel = `A${level}-${String(number).padStart(3, "0")}`;
 
     let index = Array.from(headers).findIndex(el => {
         const span = el.querySelector("span");
-        return span && span.textContent.trim() === sel;
+        return span && span.textContent.trim() === item;
     });
 
-    if(query === "Next"){
-        index += 1;
-    }else if(query === "Prev"){
-        index -= 1;
-    }
+    index += delta;
     
     if(index < 0 || index >= headers.length){
         return null;
@@ -393,4 +415,19 @@ function CheckItem(level,number,query){
 
     const target = headers[index].querySelector("span").textContent;
     return target;
-}   
+}
+
+function splitTaskURL() {
+  const u = window.location.href;
+
+  const parts = u.split("/").filter(Boolean); 
+
+  const i = parts.indexOf("tasks");
+  if (i === -1 || i + 2 >= parts.length) return null;
+
+  const prefix = "https://" + parts.slice(1, i + 1).join("/") + "/";
+  const problem = parts[i + 1];
+  const page = "/"+parts[i + 2];
+
+  return [prefix, problem, page];
+}
