@@ -1,5 +1,4 @@
 // Config
-
 const CACHE_TTL = 5 * 60 * 1000; // Cache Time-To-Live in milliseconds
 const CONCURRENT_LIMIT = 4; // Max Parallel Fetch Requests
 
@@ -198,6 +197,7 @@ async function refreshScores(force = true) {
     updateSidebar();
     updateTotalScore();
 
+
     await storeStorageCache();
 }
 
@@ -244,6 +244,10 @@ async function refreshSingleTask(url, task) {
 }
 
 function createControls() {
+    /** */
+    testtest();
+    /** */
+    
     const controlsContainer = document.createElement("div");
     controlsContainer.className = "cms-extension-controls";
     const totalScoreContainer = document.createElement("div");
@@ -351,3 +355,42 @@ function updateSidebar() {
         }
     });
 }
+
+function testtest() {
+    const item = window.location.href.match(/A\d*-\d{3}/)[0]
+    let [level,number] = item.split("-");
+    level = parseInt(level[1]);
+    number = parseInt(number);
+
+    console.log(level);
+    console.log(number);
+    const Next = CheckItem(level,number,"Next")
+    const Prev = CheckItem(level,number,"Prev")
+
+    console.log(`Next is ${Next}`);
+    console.log(`Prev is ${Prev}`);
+}
+
+function CheckItem(level,number,query){
+    const headers = document.getElementsByClassName("nav-header");
+
+    const sel = `A${level}-${String(number).padStart(3, "0")}`;
+
+    let index = Array.from(headers).findIndex(el => {
+        const span = el.querySelector("span");
+        return span && span.textContent.trim() === sel;
+    });
+
+    if(query === "Next"){
+        index += 1;
+    }else if(query === "Prev"){
+        index -= 1;
+    }
+    
+    if(index < 0 || index >= headers.length){
+        return null;
+    }
+
+    const target = headers[index].querySelector("span").textContent;
+    return target;
+}   
