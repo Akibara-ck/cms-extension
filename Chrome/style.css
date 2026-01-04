@@ -37,3 +37,15 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   font-weight: bold;
 }
+.move-button {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+.move-button:hover {
+  background-color: #e5e5e5;
+}

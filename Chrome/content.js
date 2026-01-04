@@ -248,6 +248,8 @@ function createControls() {
     const next = document.createElement("button");
     prev.setAttribute("hidden",true);
     next.setAttribute("hidden",true);
+    prev.className = "move-button";
+    next.className = "move-button";
     if(!!window.location.href.match(`${baseURL}/tasks`)){
         prev.textContent = "Prev";
         next.textContent = "Next";
