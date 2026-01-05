@@ -255,8 +255,6 @@ function createControls() {
         next.textContent = "Next";
         const prevUrl = moveProblem(-1);
         const nextUrl = moveProblem(+1);
-        console.log(prevUrl);
-        console.log(nextUrl);
         if(!!prevUrl){
             prev.removeAttribute("hidden");
         }
@@ -384,7 +382,7 @@ function updateSidebar() {
 }
 
 function moveProblem(delta) {
-    const urlSplit = splitTaskURL();
+    const urlSplit = splitProblemURL();
     const problem = urlSplit[1];
 
     let query;
@@ -419,17 +417,18 @@ function handleMove(item,delta){
     return target;
 }
 
-function splitTaskURL() {
-  const u = window.location.href;
+function splitProblemURL() {
+    const u = window.location.href
+        .split(/\?submission_id/)[0];
 
-  const parts = u.split("/").filter(Boolean); 
+    const parts = u.split("/").filter(Boolean); 
 
-  const i = parts.indexOf("tasks");
-  if (i === -1 || i + 2 >= parts.length) return null;
+    const i = parts.indexOf("tasks");
+    if (i === -1 || i + 2 >= parts.length) return null;
 
-  const prefix = "https://" + parts.slice(1, i + 1).join("/") + "/";
-  const problem = parts[i + 1];
-  const page = "/"+parts[i + 2];
+    const prefix = "https://" + parts.slice(1, i + 1).join("/") + "/";
+    const problem = parts[i + 1];
+    const page = "/"+parts.slice(i + 2).join("/");
 
-  return [prefix, problem, page];
+    return [prefix, problem, page];
 }
